@@ -1,6 +1,6 @@
 const {
   getAllLaunches,
-  // addNewLaunch, 
+  // addNewLaunch,
   scheduleNewLaunch,
   existsLaunchWithId,
   abortLaunchById,
@@ -33,24 +33,32 @@ async function httpAddNewLaunches(req, res) {
       error: "Invalid launch Date",
     });
   }
-  addNewLaunch(launch);
+  await scheduleNewLaunch(launch);
   return res.status(201).json(launch);
 }
 
-function httpAbortLaunch(req, res) {
+async function httpAbortLaunch(req, res) {
   // fn will be dependent on model
   const launchId = +req.params.id; // params name must be same as name in routing
 
   // if launch is not available then it will give 404 not found
-  if (!existsLaunchWithId(launchId)) {
+  const existLaunch = await existsLaunchWithId(launchId);
+  if (!existLaunch) {
     return res.status(404).json({
       error: "Launch not found.",
     });
   }
 
   // if launch is success
-  const aborted = abortLaunchById(launchId);
-  return res.status(200).json(aborted);
+  const aborted = await abortLaunchById(launchId);
+  if (!aborted) {
+    return res.status(400).json({
+      error: "Launch not aborted something went wrong",
+    });
+  }
+  return res.status(200).json({
+    ok: true,
+  });
 }
 module.exports = { httpGetAllLaunches, httpAddNewLaunches, httpAbortLaunch };
 

@@ -40,7 +40,8 @@ async function saveLaunch(launch) {
     throw new Error("No matching planet found"); // built in error fn that will throw error
   }
 
-  await launchesSchema.updateOne(
+  // await launchesSchema.updateOne(  // or
+  await launchesSchema.findOneAndUpdate(
     {
       flightNumber: launch.flightNumber,
     },
@@ -77,9 +78,14 @@ async function scheduleNewLaunch(launch) {
   await saveLaunch(newLaunch);
 }
 
-function existsLaunchWithId(launchId) {
+// function existsLaunchWithId(launchId) {  // when using memory
+//   // exported to controller
+//   return launches.has(launchId);
+// }
+
+async function existsLaunchWithId(launchId) {
   // exported to controller
-  return launches.has(launchId);
+  return await launchesSchema.findOne({ flightNumber: launchId });
 }
 
 // get flight no
@@ -93,15 +99,27 @@ async function getFlightNo() {
   return latestLaunch.flightNumber;
 }
 
-function abortLaunchById(launchId) {
+async function abortLaunchById(launchId) {
+  // * when using database
+  const aborted = await launchesSchema.updateOne({
+      flightNumber: launchId,
+    },{
+      upcoming: false,
+      success: false,
+    }
+  );
+
+  return aborted.ok === 1 && aborted.nModified === 1
+
+  // ? when using memory
   // launch.delete(launchId) // will completely remove the launch data
-  const aborted = launches.get(launchId); // by this it will come in history list
-  aborted.upcoming = false;
-  aborted.success = false;
-  return aborted;
+  // const aborted = launches.get(launchId); // by this it will come in history list
+  // aborted.upcoming = false;
+  // aborted.success = false;
+  // return aborted; 
 }
 
-module.exports = {
+module.exports = {x
   // addNewLaunch,
   getAllLaunches,
   existsLaunchWithId,
