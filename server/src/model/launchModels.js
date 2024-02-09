@@ -109,7 +109,10 @@ async function abortLaunchById(launchId) {
     }
   );
 
-  return aborted.ok === 1 && aborted.nModified === 1
+  // return aborted.ok === 1 && aborted.nModified === 1
+  return aborted.modifiedCount === 1;
+
+
 
   // ? when using memory
   // launch.delete(launchId) // will completely remove the launch data

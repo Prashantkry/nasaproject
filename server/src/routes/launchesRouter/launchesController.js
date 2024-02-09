@@ -49,7 +49,7 @@ async function httpAbortLaunch(req, res) {
     });
   }
 
-  // if launch is success
+  // if launch is success / fail
   const aborted = await abortLaunchById(launchId);
   if (!aborted) {
     return res.status(400).json({
