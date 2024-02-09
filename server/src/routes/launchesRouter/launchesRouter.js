@@ -6,9 +6,8 @@ const {
 const express = require("express");
 const launchesRouter = express.Router();
 
-// * before version API 
-// launchesRouter.get("/", httpGetAllLaunches);
-// launchesRouter.post("/", httpAddNewLaunches);
+launchesRouter.get("/", httpGetAllLaunches);
+launchesRouter.post("/", httpAddNewLaunches);
 launchesRouter.delete("/:id", httpAbortLaunch); // parameter of id is used here so specific launch will be aborted
 
 module.exports = launchesRouter;

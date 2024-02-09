@@ -7,6 +7,6 @@ const {
 } = require("./planetController");  // ? way 2 using destructure of obj
 
 // planetRouter.get('./planet',planetController.getAllPlanet)  // ? way 1 calling fn from obj
-planetRouter.get("/planets", httpGetAllPlanets); // ? way 2 using destructure of obj
+planetRouter.get("/", httpGetAllPlanets); // ? way 2 using destructure of obj
 
 module.exports = planetRouter;

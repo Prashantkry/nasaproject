@@ -24,7 +24,7 @@ describe("Launches API", () => {
   describe("Test GET /launches", () => {
     test("It should respond with 200 success ", async () => {
       const response = await request(app)
-        .get("/launches") // it work with app.js main file which accepts https server or express server
+        .get("/v1/launches") // it work with app.js main file which accepts https server or express server
         .expect("Content-Type", /json/)
         // expect(response.statusCode).toBe(200); // statusCode default here
         // or
@@ -53,7 +53,7 @@ describe("Launches API", () => {
     };
     test("It should be with 201 created ", async () => {
       const response = await request(app)
-        .post("/launches")
+        .post("/v1/launches")
         .send(completeLaunchData)
         .expect("Content-Type", /json/)
         .expect(201);
@@ -66,7 +66,7 @@ describe("Launches API", () => {
     });
     test("It should catch missing required properties ", async () => {
       const response = await request(app)
-        .post("/launches")
+        .post("/v1/launches")
         .send(completeLaunchDataWithoutDate)
         .expect("Content-Type", /json/)
         .expect(400); // 400 is bad request
@@ -77,7 +77,7 @@ describe("Launches API", () => {
     });
     test("It should catch invalid dates ", async () => {
       const response = await request(app)
-        .post("/launches")
+        .post("/v1/launches")
         .send(invalidDate)
         .expect("Content-Type", /json/)
         .expect(400); // 400 is bad request
