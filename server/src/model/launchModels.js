@@ -1,7 +1,11 @@
 const launches = new Map();
 
-// * to keep track of flight no in launch use last flight
-let latestFlightNo = 100;
+// bringing launches schema
+const launchesSchema = require("./launchesSchema");
+
+const planets_ = require("./planetSchema");
+
+let defaultFlightNo = 100;
 
 const launch = {
   flightNumber: 100, // act as a unique Id
@@ -14,28 +18,79 @@ const launch = {
   success: true, // make in history section list of frontend
 };
 
+saveLaunch(launch); // calling to save to mongo db
+
 launches.set(launch.flightNumber, launch);
-function getAllLaunches() {
-  return Array.from(launches.values());
+
+// below function act as data access layers
+async function getAllLaunches() {
+  // return Array.from(launches.values()); // when saving to memory
+  return await launchesSchema.find({}, { _id: 0, __v: 0 }); // when saving to database
 }
 
-// POST Launch
-function addNewLaunch(launch) {
-  latestFlightNo++;
-  launches.set(
-    latestFlightNo,
-    Object.assign(launch, {
-      success: true,
-      upcoming: true,
-      customer: ["Prashant", "NASA"],
-      flightNumber: latestFlightNo,
-    })
+// ! save launches to mongo db
+async function saveLaunch(launch) {
+  // validating referential integrity
+  const planets = await planets_.findOne({
+    keplerName: launch.target,
+  });
+
+  if (!planets) {
+    // if no matching planet is found
+    throw new Error("No matching planet found"); // built in error fn that will throw error
+  }
+
+  await launchesSchema.updateOne(
+    {
+      flightNumber: launch.flightNumber,
+    },
+    launch,
+    {
+      upsert: true,
+    }
   );
+}
+
+// POST Launch    //! FROM MEMORY launch
+// function addNewLaunch(launch) {
+//   latestFlightNo++;
+//   launches.set(
+//     latestFlightNo,
+//     Object.assign(launch, {
+//       success: true,
+//       upcoming: true,
+//       customer: ["Prashant", "NASA"],
+//       flightNumber: latestFlightNo,
+//     })
+//   );
+// }
+
+// ! from data base launch
+async function scheduleNewLaunch(launch) {
+  const newFlightNo = (await getFlightNo()) + 1;
+  const newLaunch = Object.assign(launch, {
+    success: true,
+    upcoming: true,
+    customer: ["Prashant Kumar", "NASA"],
+    flightNumber: newFlightNo,
+  });
+  await saveLaunch(newLaunch);
 }
 
 function existsLaunchWithId(launchId) {
   // exported to controller
   return launches.has(launchId);
+}
+
+// get flight no
+async function getFlightNo() {
+  // * to keep track of flight no in launch use last flight
+  let latestLaunch = await launchesSchema.findOne().sort("-flightNumber"); // - means in descending order
+  if (!latestLaunch) {
+    return defaultFlightNo;
+  }
+
+  return latestLaunch.flightNumber;
 }
 
 function abortLaunchById(launchId) {
@@ -47,10 +102,11 @@ function abortLaunchById(launchId) {
 }
 
 module.exports = {
+  // addNewLaunch,
   getAllLaunches,
-  addNewLaunch,
   existsLaunchWithId,
   abortLaunchById,
+  scheduleNewLaunch,
 };
 
 // created schema of launch models
