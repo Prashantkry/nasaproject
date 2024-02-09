@@ -119,7 +119,7 @@ async function abortLaunchById(launchId) {
   // return aborted; 
 }
 
-module.exports = {x
+module.exports = {
   // addNewLaunch,
   getAllLaunches,
   existsLaunchWithId,
