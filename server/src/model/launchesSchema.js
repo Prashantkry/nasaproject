@@ -26,7 +26,7 @@ const launchesSchema = new mongoose.Schema({
   //   },
   target: {
     type: String,
-    required: true,
+    // required: true,    // spacesX having problem in inserting 1st launch 
   },
   upcoming: {
     type: Boolean,

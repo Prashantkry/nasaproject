@@ -6,11 +6,21 @@ const {
   abortLaunchById,
 } = require("../../model/launchModels");
 
+const { GenPagination } = require("../../utility/query");
+
+// TODO problem here 
+
 async function httpGetAllLaunches(req, res) {
-  return res.status(200).json(await getAllLaunches()); // (method) Map<any, any>.values(): IterableIterator<any> Returns an iterable of values in the map
+  // creating pagination in launches fn
+  // ! spacesX work start
+  const { skip, limit } = await GenPagination(req.query);
+  // ! spacesX work end
+
+  const launches_ = await getAllLaunches(skip, limit);
+  return res.status(200).json(launches_);
+
   // return res.status(200).json(Array.from(launches.getAllLaunches())); // (method) Map<any, any>.values(): IterableIterator<any> Returns an iterable of values in the map
 }
-
 async function httpAddNewLaunches(req, res) {
   const launch = req.body;
   // below if condition will executed when any launches fails

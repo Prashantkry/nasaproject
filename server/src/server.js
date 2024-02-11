@@ -1,11 +1,14 @@
 // all server code here
 const http = require("http"); // allows web-socket, http, express
 
+require('dotenv').config() // after writing at top it will be applicable at all below code 
+
 const app = require("./app");
 
 const PORT = process.env.PORT || 9000; // here process.env.PORT check for default env if not then 8080 , also can be set in package json -> "start": "set PORT=5000 && node src/server.js"
 
 const { loadPlanetsData } = require("./model/planetModel");
+const { loadLaunchData } = require("./model/launchModels");
 
 const {mongoConnect} = require("./utility/mongo");
 
@@ -23,6 +26,10 @@ async function startServer() {
   // * new method after 6th version of mongo
   await mongoConnect();
   await loadPlanetsData();
+
+  // ! spaceX project work start
+  await loadLaunchData()
+  // ! spaceX project work end
 
   server.listen(PORT, () => {
     console.log(`Listening on port ${PORT}...`);
