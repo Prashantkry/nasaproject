@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         node-version: [16.x, 14.x, 12.x]
-        mongo-version: [6.x, 5.3.x, 5.2.x]
+        mongo-version: [6.0, 5.3, 5.2]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
