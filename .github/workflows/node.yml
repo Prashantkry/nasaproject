@@ -2,9 +2,9 @@
 name: Nasa Project CLI
 on:
   push:
-    branches: [master]
+    branches: [main]
   pull_request:
-    branches: [master]
+    branches: [main]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,5 +15,4 @@ jobs:
         with:
           node-version: "18"
       - run: npm install
-      - run: npm run build
-        working-directory: client
+      - run: npm run build --prefix client
