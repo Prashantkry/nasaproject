@@ -10,9 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Use Node.js version 20
+      - name: Use Node.js version 18
         uses: actions/setup-node@v1
         with:
-          node-version: "20"
+          node-version: "18"
       - run: npm install
       - run: npm run build --prefix client
