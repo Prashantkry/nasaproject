@@ -8,10 +8,12 @@ on:
 jobs:
   build:
     env:
-      CI: true  # the Create React app test script will know that we're running any continuous integration environment and will disable watch mode.This is a built in feature of the Create React app test script, the one that we use to test our clients project, but we could put any different kind of variable here.
+      CI: true # the Create React app test script will know that we're running any continuous integration environment and will disable watch mode.This is a built in feature of the Create React app test script, the one that we use to test our clients project, but we could put any different kind of variable here.
+      MONGO_URL: mongodb://localhost/nasa
     strategy:
       matrix:
         node-version: [16.x, 14.x, 12.x]
+        mongo-version: [6.x, 5.3.x, 5.2.x]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -19,6 +21,10 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
+      - name: MongoDB in GitHub Actions
+        uses: supercharge/mongodb-github-action@1.10.0
+        with:
+          mongodb-version: ${{ matrix.mongo-version }}
       - run: npm install
       - run: npm run build --prefix client
       - run: npm test
